@@ -1,0 +1,103 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: order-app
+  datasource:
+    username: root
+    password: hjXL327918
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/sca_order?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+  cloud:
+    nacos:
+      #登录控制台的 用户名/密码
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: public
+        server-addr: 127.0.0.1:8848 #Nacos服务注册中心地址
+    sentinel:
+      transport:
+        port: 8787
+        dashboard: 127.0.0.1:8888
+      datasource:
+        ds1:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            data-id: sentinel
+            group-id: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+    alibaba:
+      seata:
+        tx-service-group: phantom #配置事物分组
+    #消息队列-消费者配置
+#    stream:
+#      function:
+#        definition: consumer;
+#      rocketmq:
+#        binder:
+#          name-server: localhost:9876
+#        bindings:
+#          consumer-in-0:
+#            consumer:
+#              messageModel: BROADCASTING
+#      bindings:
+#        consumer-in-0:
+#          destination: broadcast
+#          group: broadcast-consumer
+  redis:
+    host: localhost
+    #password:
+    ## 连接超时时间（毫秒）
+    timeout: 10000
+    # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
+    database: 0
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 8
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 0
+
+
+
+# SpringBoot 的默认日志级别 info， feign 的 debug 的日志不会输出, 所以自定义目录日志级别
+# 也可以去掉这里的配置，然后针对个别的服务调用的 @FeignClient 注解中添加 configuration属性的自定义配置类
+#logging:
+#  level:
+#    com.phantom.sca.order.feign: debug
+
+# 这里也可以通过如下方式对feign的日志进行部分服务的局部配置，这里 product-app 就是具体的服务名
+feign:
+  client:
+    config:
+      product-app:
+        loggerLevel: BASIC
+  sentinel:
+    # openFeign 整合 sentinel
+    enabled: true
+
+
+## seate 相关配置
+seata:
+  registry: # 配置 seata 注册中心, 告诉 seata client 怎么去访问 seata server (TC)
+    type: nacos
+    nacos:
+      username: nacos
+      password: nacos
+      server-addr: 127.0.0.1:8848 #seata server 所在的 nacos 注册中心地址
+      application: seata-server #seata server 的服务名（默认值就是 seata-server，没改可以不配置）
+      group: SEATA_GROUP #seata server 的分组（默认值就是 SEATA_GROUP，没改可以不配置）
+  config:
+    type: nacos
+    nacos:
+      username: nacos
+      password: nacos
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP

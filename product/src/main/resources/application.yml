@@ -1,0 +1,78 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: product-app
+  cloud:
+    nacos:
+      #登录控制台的 用户名/密码
+      discovery:
+        username: nacos
+        password: nacos
+        namespace: public
+        server-addr: 127.0.0.1:8848
+
+    #  spring.cloud.stream.bindings 为 Binding 配置项
+    #  Binding 分成 Input 和 Output 两种类型，但是在配置项中并不能体现出来，而是要在稍后搭配 @Input or @Output 注解，才会区分
+    #  spring.cloud.stream.rocketmq.binder 为 RocketMQ Binder 配置项。
+    #  name-server：RocketMQ Namesrv 地址。名称服务充当路由消息的提供者。生产者或消费者能够通过名字服务查找各主题相应的 Broker IP 列表。
+    #  多个 Namesrv 实例组成集群，但相互独立，没有信息交换。
+    stream:
+      bindings:
+        output-common:
+          #RocketMQ Topic
+          destination: topic-common-01
+          content-type: application/json
+        output-temple:
+          #RocketMQ Topic
+          destination: topic-temple-01
+          content-type: application/json
+      # Spring Cloud Stream RocketMQ 配置项
+      rocketmq:
+        # 对应 RocketMQBinderConfigurationProperties 类
+        binder:
+          name-server: localhost:9876
+        # RocketMQ 自定义 Binding 配置项，对应 RocketMQBindingProperties Map
+        bindings:
+          output-common:
+            # RocketMQ Producer 配置项，对应 RocketMQProducerProperties 类
+            producer:
+              #生产者分组名
+              group: group-common
+              #同步发送消息
+              sync: true
+              #最大字节数›
+              maxMessageSize: 8249344
+              #发送消息的超时时间(毫秒)。默认值: 3000
+              sendMessageTimeout: 3000
+              # 在同步发送消息的模式下，消息发送失败的重试次数。默认值: 2
+              retryTimesWhenSendFailed: 2
+          output-temple:
+            producer:
+              # 是否启用 Producer。默认值: true
+              enable: true
+              # 生产者分组名
+              group: group-temple
+              # 发送事务消息
+              transactional: true
+              # 在同步发送消息的模式下，消息发送失败的重试次数。默认值: 2
+              retryTimesWhenSendFailed: 2
+              # 在异步发送消息的模式下，消息发送失败的重试次数。默认值: 2
+              retryTimesWhenSendAsyncFailed: 2
+              # 消息发送失败的情况下是否重试其它的 broker。默认值: false
+              retryNextServer: false
+
+
+
+# 日志打印
+logging:
+  level:
+    com:
+      alibaba:
+        cloud:
+          stream:
+            binder:
+              rocketmq: DEBUG
+
+

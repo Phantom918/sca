@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.phantom.sca.stock.mapper.StockMapper">
+
+    <sql id="orderColumns"> id, product_id, `count` </sql>
+
+    <select id="findAll" resultType="com.phantom.sca.stock.model.Stock">
+        select <include refid="orderColumns"/> from stock
+    </select>
+
+</mapper>
