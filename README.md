@@ -1,6 +1,6 @@
 ## Spring Cloud Alibaba 
 
-### 介绍
+### 项目介绍
 ```text
 项目是尝试使用 Spring Cloud Alibaba 的相关组件使用实践，组件包含
 1. seta 分布式事务
@@ -10,3 +10,5 @@
 5. Redis 相关api使用
 6. sentinel 整合 gateway 限流 
 ```
+
+
